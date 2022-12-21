@@ -1,4 +1,4 @@
-import { userSignUpModel } from "./models/userSignUp.model.js";
+import { userSignUpModel, userSignInModel } from "./models/user.models.js";
 import { connection } from "./database/db.js";
 
 export default class ValidateModel {
@@ -20,6 +20,10 @@ export default class ValidateModel {
 				this.model = userSignUpModel;
 				this.validation();
 				break;
+			case "signin":
+				this.model = userSignInModel;
+				this.validation();
+				break;
 			default:
 				break;
 		}
@@ -36,9 +40,10 @@ export default class ValidateModel {
 	}
 
 	async checkIfUsed() {
+		const column = this.obj.name ? "Username" : "Email";
 		const result = await this._connection.query(
-			`SELECT * FROM users WHERE Username=$1`,
-			[this.obj.name]
+			`SELECT * FROM users WHERE ${column}=$1`,
+			[this.obj.name || this.obj.email]
 		);
 		if (result.rows.length !== 0) {
 			return true;
