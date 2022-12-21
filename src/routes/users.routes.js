@@ -1,5 +1,11 @@
 import { Router } from "express";
-import { signUp } from "../controllers/users.controllers.js";
+import { signIn, signUp } from "../controllers/users.controllers.js";
+import {
+	compareHash,
+	createSession,
+	validateSignInPayload,
+	verifyToken,
+} from "../middlewares/auth.middlewares.js";
 import {
 	encryptPassword,
 	validatePayload,
@@ -8,5 +14,13 @@ import {
 const router = Router();
 
 router.post("/signup", validatePayload, encryptPassword, signUp);
+router.post(
+	"/signin",
+	validateSignInPayload,
+	compareHash,
+	createSession,
+	signIn
+);
+router.get("/users/me", verifyToken);
 
 export default router;
