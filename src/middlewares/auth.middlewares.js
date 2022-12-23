@@ -22,24 +22,31 @@ export const compareHash = async (req, res, next) => {
 };
 
 export const createSession = async (req, res, next) => {
-	const query = await connection.query(
-		`SELECT "userId" FROM users WHERE email=$1`,
-		[req.body.email]
-	);
-	const userId = query.rows[0].userId;
-	await connection.query(`INSERT INTO sessions ("userId") VALUES ($1)`, [
-		userId,
-	]);
-	res.locals.id = userId;
-	next();
+	try {
+		const query = await connection.query(
+			`SELECT "user_id" FROM users WHERE email=$1`,
+			[req.body.email]
+		);
+		const userId = query.rows[0].user_id;
+		const token = jwt.sign(userId, process.env.JWT_SECRET);
+		await connection.query(
+			`INSERT INTO sessions (user_id, token) VALUES ($1, $2)`,
+			[userId, token]
+		);
+		res.locals.token = token;
+		next();
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 export const verifyToken = async (req, res, next) => {
 	const token = req.headers.authorization.replace("Bearer ", "");
 	try {
 		const userId = jwt.verify(token, process.env.JWT_SECRET);
-		res.status(200).send(userId);
+		res.locals.user_id = userId;
+		next();
 	} catch (error) {
-		console.log(error);
+		res.sendStatus(401);
 	}
 };
