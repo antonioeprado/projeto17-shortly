@@ -1,5 +1,6 @@
 import { userSignUpModel, userSignInModel } from "./models/user.models.js";
 import { connection } from "./database/db.js";
+import { urlToShorten } from "./models/urls.models.js";
 
 export default class ValidateModel {
 	_connection = connection;
@@ -16,7 +17,7 @@ export default class ValidateModel {
 
 	setModel() {
 		switch (this.model) {
-			case "users":
+			case "signup":
 				this.model = userSignUpModel;
 				this.validation();
 				break;
@@ -24,6 +25,9 @@ export default class ValidateModel {
 				this.model = userSignInModel;
 				this.validation();
 				break;
+			case "url":
+				this.model = urlToShorten;
+				this.validation();
 			default:
 				break;
 		}
@@ -40,7 +44,7 @@ export default class ValidateModel {
 	}
 
 	async checkIfUsed() {
-		const column = this.obj.name ? "Username" : "Email";
+		const column = this.obj.name ? "name" : "email";
 		const result = await this._connection.query(
 			`SELECT * FROM users WHERE ${column}=$1`,
 			[this.obj.name || this.obj.email]
