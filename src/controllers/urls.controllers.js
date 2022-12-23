@@ -44,3 +44,12 @@ export const redirect = async (req, res) => {
 		console.log(error);
 	}
 };
+
+export const deleteUrl = async (req, res) => {
+	try {
+		await connection.query(`DELETE FROM urls WHERE url_id=$1`, [req.params.id]);
+		res.sendStatus(204);
+	} catch (error) {
+		console.log(error);
+	}
+};
