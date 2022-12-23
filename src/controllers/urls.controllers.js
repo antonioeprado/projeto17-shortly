@@ -8,12 +8,13 @@ export const shortenUrl = async (req, res) => {
 			[res.locals.user_id, res.locals.url, shortUrl]
 		);
 		const urlIdQuery = await connection.query(
-			`SELECT url_id FROM urls WHERE short_url=$1`,
+			`SELECT url_id, user_id FROM urls WHERE short_url=$1`,
 			[shortUrl]
 		);
-		await connection.query(`INSERT INTO visits (url_id) VALUES ($1)`, [
-			urlIdQuery.rows[0].url_id,
-		]);
+		await connection.query(
+			`INSERT INTO visits (url_id, user_id) VALUES ($1, $2)`,
+			[urlIdQuery.rows[0].url_id, urlIdQuery.rows[0].user_id]
+		);
 		res.status(200).send({ shortUrl });
 	} catch (error) {
 		console.log(error);
