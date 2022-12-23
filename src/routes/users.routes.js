@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { signIn, signUp } from "../controllers/users.controllers.js";
+import {
+	signIn,
+	signUp,
+	userProfile,
+} from "../controllers/users.controllers.js";
 import {
 	compareHash,
 	createSession,
@@ -21,6 +25,6 @@ router.post(
 	createSession,
 	signIn
 );
-router.get("/users/me", verifyToken);
+router.get("/users/me", verifyToken, userProfile);
 
 export default router;
