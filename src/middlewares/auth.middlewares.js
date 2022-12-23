@@ -44,6 +44,7 @@ export const verifyToken = async (req, res, next) => {
 	const token = req.headers.authorization.replace("Bearer ", "");
 	try {
 		const userId = jwt.verify(token, process.env.JWT_SECRET);
+		console.log(userId);
 		res.locals.user_id = userId;
 		next();
 	} catch (error) {
