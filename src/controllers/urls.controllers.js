@@ -3,10 +3,6 @@ import { connection } from "../database/db.js";
 export const shortenUrl = async (req, res) => {
 	const shortUrl = nanoid();
 	try {
-		console.log(res.locals.user_id, typeof res.locals.user_id);
-		console.log(res.locals.url, typeof res.locals.url);
-		console.log(shortUrl, typeof shortUrl);
-
 		await connection.query(
 			`INSERT INTO urls (user_id, url, short_url) VALUES ($1, $2, $3)`,
 			[res.locals.user_id, res.locals.url, shortUrl]
