@@ -7,7 +7,7 @@ export const signUp = async (req, res) => {
 	try {
 		const { name, email, password } = res.locals.user;
 		await connection.query(
-			`INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`,
+			`INSERT INTO users (name, email, password) VALUES ($1, $2, $3)`,
 			[name, email, password]
 		);
 		res.sendStatus(201);
@@ -17,7 +17,7 @@ export const signUp = async (req, res) => {
 };
 
 export const signIn = (req, res) => {
-	const token = jwt.sign(res.locals.id, process.env.JWT_SECRET);
+	const token = res.locals.token;
 	res.status(200).send({ token });
 };
 
